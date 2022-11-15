@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<data>
+	<Receivers>
+		<nombre>HIS</nombre>
+	</Receivers>
+	<Handlers>
+		<nombre>PASS</nombre>
+	</Handlers>
+	<Connection>
+		<nombre>HL7</nombre>
+	</Connection>
+</data>
