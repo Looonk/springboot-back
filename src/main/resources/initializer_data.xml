@@ -1,12 +1,17 @@
-<?xml version="1.0"?>
-<data>
-	<Receivers>
-		<nombre>HIS</nombre>
-	</Receivers>
-	<Handlers>
-		<nombre>PASS</nombre>
-	</Handlers>
-	<Connection>
-		<nombre>HL7</nombre>
-	</Connection>
-</data>
+<Receiver>
+	<name>HCE Nube</name>
+	<port>5000</port>
+	<facility>MINSAP</facility>
+	<senders>
+		<sender>
+			<name>String</name>
+			<address>String</address>
+			<port>Integer</port>
+			<facility>String</facility>
+			<hltOverHttp>Boolean</hltOverHttp>
+			<tls>Boolean</tls>
+			<idis>Boolean</idis>
+			<erp>Boolean</erp>
+		</sender>
+	</senders>
+</Receiver>

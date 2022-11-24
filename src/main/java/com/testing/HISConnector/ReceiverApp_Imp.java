@@ -1,18 +1,12 @@
-package com.testing.connector;
+package com.testing.HISConnector;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.*;
 import org.hibernate.cfg.NotYetImplementedException;
 
 import controllers.ReceiverApplication;
-import entity.ClinicalDocument;
-import entity.HL7Error;
-import entity.MedicalPerson;
-import entity.Order;
-import entity.OrderResult;
-import entity.Patient;
-import entity.Procedure;
 import enums.ActionCode;
 
 import org.jboss.seam.contexts.Contexts;
@@ -38,6 +32,11 @@ public class ReceiverApp_Imp extends ReceiverApplication {
                 result.add(HL7Error.buildGeneric(null, e.getCause().getMessage(), false));
         }
         return result;
+    }
+
+
+    public ReceiverApp_Imp(AppReceiver appReceiver) {
+        super(appReceiver);
     }
 
     @Override

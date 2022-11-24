@@ -7,10 +7,10 @@ import java.util.Map;
 
 import javax.persistence.PrePersist;
 
+import com.testing.ConfigFile.Data;
+import com.testing.ConfigFile.Initializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,8 +31,6 @@ import com.testing.Services.IUserService;
 @RestController
 public class UserRestController {
 
-    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
-
     @Autowired
     private IUserService service;
 
@@ -47,8 +45,7 @@ public class UserRestController {
     @RequestMapping("/users")
     @ResponseBody
     public List<User> users() {
-        List<User> lista = (List<User>) service.findAll();
-        return lista;
+        return (List<User>) service.findAll();
     }
 
     @RequestMapping("/users/{id}")
@@ -123,5 +120,14 @@ public class UserRestController {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Wrong Password");
         }
     }
+
+    @RequestMapping("/data")
+    @ResponseBody
+    public Data readData() {
+        return new Initializer().fillData();
+    }
+
+
+
 
 }

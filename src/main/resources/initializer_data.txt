@@ -1,0 +1,1 @@
+HCE Nube,5000,MINSAP,[HIS;10.128.50.170;5000;Cira Garcia;false;false;false;false]
