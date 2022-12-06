@@ -1,24 +1,21 @@
-package com.testing.ConfigFile;
+package cu.uci.cesim.hce_back.ConfigFile;
 
 
-import com.testing.HISConnector.ReceiverApp_Imp;
-import controllers.ReceiverApplication;
-import entity.App;
+import ca.uhn.hl7v2.protocol.ReceivingApplication;
+import cu.uci.cesim.hce_back.HISConnector.ReceiverApp_Imp;
 import entity.AppReceiver;
 import entity.AppSender;
-import entity.KeyWrapper;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.Key;
 import java.util.*;
 
 public class Initializer {
 
-    private final ArrayList<Sender> senders = new ArrayList<Sender>();
+    //private final ArrayList<Sender> senders = new ArrayList<Sender>();
 
-    public String read() {
+    public static String read() {
         File file = null;
         try {
             file = new File(new ClassPathResource("initializer_data.txt").getFile().toURI());
@@ -36,9 +33,11 @@ public class Initializer {
         return "";
     }
 
-    public Data fillData() {
+    public static Data fillData() {
+
+        ArrayList<Sender> senders = new ArrayList<Sender>();
+
         String out = read();
-        System.out.println(out);
         String[] raw = out.split(",");
 
         String name = raw[0];
@@ -49,33 +48,37 @@ public class Initializer {
         if (senderraw.contains("&")) {
             String[] sl = senderraw.split("&");
             for (String s : sl) {
-                fillSender(s);
+                senders.add(fillSender(s));
             }
         } else {
-            fillSender(senderraw);
+            senders.add(fillSender(senderraw));
         }
 
-        KeyWrapper kw = new KeyWrapper(name);
+
         AppReceiver app = new AppReceiver(name, port, facility, null);
-        SortedMap<KeyWrapper, AppReceiver> config = new TreeMap<>();
+
+        SortedMap<String, AppReceiver> config = new TreeMap<>();
+
+        SortedMap<String, ReceivingApplication> handlers = new TreeMap<>();
+        handlers.put(app.getName(), new ReceiverApp_Imp(app));
+
+
+
         SortedMap<String, AppSender> appS = new TreeMap<>();
-
-
         for (Sender x : senders) {
             AppSender s = new AppSender(x.getName(), x.getPort(), x.getFacility(), x.getAddress());
             appS.put(x.getName(), s);
         }
-
         app.setSenders(appS);
-        config.put(new KeyWrapper(app.getName()), app);
-        SortedMap<KeyWrapper, ReceiverApplication> handlers = new TreeMap<>();
-        handlers.put(kw, new ReceiverApp_Imp(app));
+        app.setCloud(true);
+        config.put(app.getName(), app);
+
 
         return new Data(config, handlers);
 
     }
 
-    public void fillSender(String raw) {
+    public static Sender fillSender(String raw) {
         String[] sr = raw.split(";");
         String sn = sr[0];
         String sa = sr[1];
@@ -86,8 +89,8 @@ public class Initializer {
         tls = sr[5].equalsIgnoreCase("true");
         idis = sr[6].equalsIgnoreCase("true");
         erp = sr[7].equalsIgnoreCase("true");
-        Sender x = new Sender(sn, sa, sp, sf, hltOverHttp, tls, idis, erp);
-        senders.add(x);
+        return new Sender(sn, sa, sp, sf, hltOverHttp, tls, idis, erp);
+        //senders.add(x);
     }
 
 

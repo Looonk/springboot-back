@@ -1,10 +1,10 @@
-package com.testing;
+package cu.uci.cesim.hce_back;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TestApplicationTests {
+class HCEBackApplicationTests {
 
 	@Test
 	void contextLoads() {

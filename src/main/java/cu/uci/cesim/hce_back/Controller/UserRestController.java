@@ -1,33 +1,21 @@
-package com.testing.Controller;
+package cu.uci.cesim.hce_back.Controller;
 
+import cu.uci.cesim.hce_back.Entity.User;
+import cu.uci.cesim.hce_back.HISConnector.SendAndReceiveMessage_Imp;
+import cu.uci.cesim.hce_back.Services.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.persistence.PrePersist;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.PrePersist;
-
-import com.testing.ConfigFile.Data;
-import com.testing.ConfigFile.Initializer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.keygen.KeyGenerators;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
-import com.testing.Entity.User;
-import com.testing.Services.IUserService;
-
-@CrossOrigin(origins = { "http://locahost:4200/" })
+@CrossOrigin(origins = {"http://locahost:4200/"})
 @RestController
 public class UserRestController {
 
@@ -36,6 +24,9 @@ public class UserRestController {
 
     @SuppressWarnings("unused")
     private Date createAt;
+
+    @Autowired
+    private SendAndReceiveMessage_Imp hl7App;
 
     @PrePersist
     public void prePersist() {
@@ -57,14 +48,14 @@ public class UserRestController {
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User user) {
-        
-        if(service.findByEmail(user.getEmail())!=null) {
+
+        if (service.findByEmail(user.getEmail()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "User already exist on database");
         }
-        if(service.findByUsername(user.getUsername())!=null) {
+        if (service.findByUsername(user.getUsername()) != null) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Username already exist on database");
         }
-        
+
         user.setCreateAt(new Date());
         String encodedString = Base64.getEncoder().encodeToString(user.getPassword().getBytes());
         user.setPassword(encodedString);
@@ -121,13 +112,28 @@ public class UserRestController {
         }
     }
 
-    @RequestMapping("/data")
-    @ResponseBody
-    public Data readData() {
-        return new Initializer().fillData();
+    @RequestMapping(value = "/hl7", method = RequestMethod.POST)
+    public String hl7(@org.jetbrains.annotations.NotNull @RequestBody String app) {
+
+
+        if(hl7App != null && hl7App.isConfigured()){
+
+            if(!hl7App.serverInRunning(app)){
+                try {
+                    hl7App.startServerIn(app);
+                    return "App Started";
+                } catch (InterruptedException e) {
+                    System.out.println(e.getMessage());
+                    throw new RuntimeException(e);
+                } catch (Exception e1) {
+                    System.out.println(e1.getMessage());
+                    throw new RuntimeException(e1);
+                }
+            }
+
+            else
+                return "NO App";
+        } else
+            return "NOOOOOO";
     }
-
-
-
-
 }

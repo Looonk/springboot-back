@@ -1,17 +1,15 @@
-package com.testing.HISConnector;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import entity.*;
-import org.hibernate.cfg.NotYetImplementedException;
+package cu.uci.cesim.hce_back.HISConnector;
 
 import controllers.ReceiverApplication;
-import enums.ActionCode;
-
+import entity.AppReceiver;
+import entity.ClinicalDocument;
+import entity.HL7Error;
 import org.jboss.seam.contexts.Contexts;
 import org.jboss.seam.contexts.Lifecycle;
 import org.jboss.seam.core.Events;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReceiverApp_Imp extends ReceiverApplication {
 
@@ -22,7 +20,7 @@ public class ReceiverApp_Imp extends ReceiverApplication {
                     && !Contexts.isSessionContextActive())
                 Lifecycle.beginCall();
             // System.out.println("Raise Event: " + event);
-            Events.instance().raiseEvent(event, new Object[] { param });
+            Events.instance().raiseEvent(event, new Object[]{param});
         } catch (Exception e) {
             // e.printStackTrace();
             if (e.getCause().getMessage().contains(HL7Error.getRootSeparator())
@@ -40,6 +38,13 @@ public class ReceiverApp_Imp extends ReceiverApplication {
     }
 
     @Override
+    public List<HL7Error> launchClinicalDocumentNotification(ClinicalDocument clinicalDocument) {
+        return null;
+    }
+
+
+    /*
+    @Override
     public List<HL7Error> launchApprovedAPProcedure(List<Order> arg0, List<String> arg1) {
         throw new NotYetImplementedException();
     }
@@ -52,7 +57,9 @@ public class ReceiverApp_Imp extends ReceiverApplication {
     @Override
     public List<HL7Error> launchApprovedEmergencyProcedure(List<Order> arg0, List<String> arg1) {
         throw new NotYetImplementedException();
-    };
+    }
+
+    ;
 
     @Override
     public List<HL7Error> launchApprovedIMGRequest(List<Order> arg0, List<String> arg1) {
@@ -202,4 +209,6 @@ public class ReceiverApp_Imp extends ReceiverApplication {
         throw new NotYetImplementedException();
     }
 
+
+     */
 }

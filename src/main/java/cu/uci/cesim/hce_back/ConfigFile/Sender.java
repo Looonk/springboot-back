@@ -1,4 +1,4 @@
-package com.testing.ConfigFile;
+package cu.uci.cesim.hce_back.ConfigFile;
 
 public class Sender {
 
